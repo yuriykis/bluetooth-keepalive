@@ -19,7 +19,7 @@ type System interface {
 	Devices() ([]*Device, error)
 }
 
-func checkOSType() SystemType {
+func osType() SystemType {
 	switch runtime.GOOS {
 	case "darwin":
 		return MacSystemType
@@ -37,8 +37,7 @@ func main() {
 		system System
 		err    error
 	)
-	osSystemType := checkOSType()
-	switch osSystemType {
+	switch osType() {
 	case MacSystemType:
 		system, err = NewMacSystem()
 	case LinuxSystemType:
