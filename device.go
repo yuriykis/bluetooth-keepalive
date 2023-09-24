@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"strings"
+
+	"github.com/andybrewer/mack"
 )
 
 type Device struct {
@@ -12,6 +14,11 @@ type Device struct {
 
 func (d *Device) String() string {
 	return fmt.Sprintf("%s - %s", d.Name, d.Type)
+}
+
+func (d *Device) Up() error {
+	mack.Say("Up")
+	return nil
 }
 
 func makeDevices(output string) []*Device {

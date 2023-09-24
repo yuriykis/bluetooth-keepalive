@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"runtime"
 )
@@ -55,6 +54,11 @@ func main() {
 		log.Fatal(err)
 	}
 	for _, d := range devices {
-		fmt.Println(d)
+		if d.Type == "Speaker" {
+			err := d.Up()
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
 	}
 }
