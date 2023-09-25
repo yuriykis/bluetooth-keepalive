@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"runtime"
+	"time"
 )
 
 type SystemType string
@@ -28,6 +29,7 @@ func main() {
 		err    error
 		stype  SystemType
 	)
+
 	switch stype.osType(runtime.GOOS) {
 	case MacSystemType:
 		system, err = NewMacSystem()
@@ -41,16 +43,19 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	devices, err := system.Devices()
 	if err != nil {
 		log.Fatal(err)
 	}
-	for _, d := range devices {
-		if d.Type == "Speaker" {
-			err := d.Up()
-			if err != nil {
-				log.Fatal(err)
-			}
+	upDevicesLoop(devices)
+}
+
+func upDevicesLoop(devices []*Device) {
+	for {
+		for _, d := range devices {
+			d.Up()
 		}
+		time.Sleep(1 * time.Second)
 	}
 }

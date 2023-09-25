@@ -2,3 +2,4 @@
 bin/
 jbl.sh
 bash.sh
+__debug_*
