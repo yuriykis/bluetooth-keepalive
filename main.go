@@ -14,29 +14,21 @@ const (
 	WindowsSystemType SystemType = "windows"
 )
 
-type System interface {
-	Devices() ([]*Device, error)
+func (s SystemType) osType(stype string) SystemType {
+	return SystemType(stype)
 }
 
-func osType() SystemType {
-	switch runtime.GOOS {
-	case "darwin":
-		return MacSystemType
-	case "linux":
-		return LinuxSystemType
-	case "windows":
-		return WindowsSystemType
-	default:
-		return UnknownSystemType
-	}
+type System interface {
+	Devices() ([]*Device, error)
 }
 
 func main() {
 	var (
 		system System
 		err    error
+		stype  SystemType
 	)
-	switch osType() {
+	switch stype.osType(runtime.GOOS) {
 	case MacSystemType:
 		system, err = NewMacSystem()
 	case LinuxSystemType:
