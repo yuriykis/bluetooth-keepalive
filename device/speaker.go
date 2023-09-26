@@ -3,9 +3,10 @@ package device
 import (
 	"bytes"
 	"fmt"
-	"log"
 	"os/exec"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/andybrewer/mack"
 )
@@ -18,21 +19,6 @@ func NewSpeaker(name string) *Speaker {
 	return &Speaker{
 		Name: name,
 	}
-}
-
-func (s *Speaker) musicPlaying() (bool, error) {
-	cmd1 := exec.Command("/usr/bin/pmset", "-g")
-	cmd2 := exec.Command("grep", " sleep")
-	output, err := cmd1.Output()
-	if err != nil {
-		return false, err
-	}
-	cmd2.Stdin = bytes.NewBuffer(output)
-	output, err = cmd2.Output()
-	if err != nil {
-		return false, err
-	}
-	return strings.Contains(string(output), "coreaudiod"), nil
 }
 
 func (s *Speaker) String() string {
@@ -50,6 +36,21 @@ func (s *Speaker) Up() error {
 		}
 	}
 	return nil
+}
+
+func (s *Speaker) musicPlaying() (bool, error) {
+	cmd1 := exec.Command("/usr/bin/pmset", "-g")
+	cmd2 := exec.Command("grep", " sleep")
+	output, err := cmd1.Output()
+	if err != nil {
+		return false, err
+	}
+	cmd2.Stdin = bytes.NewBuffer(output)
+	output, err = cmd2.Output()
+	if err != nil {
+		return false, err
+	}
+	return strings.Contains(string(output), "coreaudiod"), nil
 }
 
 func (s *Speaker) play() error {

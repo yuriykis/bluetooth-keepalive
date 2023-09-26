@@ -52,7 +52,7 @@ func discoverMacDevices() ([]device.Devicer, error) {
 		if err != nil {
 			return nil, err
 		}
-		devices = device.MakeDevices(string(out))
+		devices = device.MakeMacDevices(string(out))
 	}
 	return devices, nil
 }

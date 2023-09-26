@@ -1,18 +1,11 @@
 package device
 
 import (
-	"fmt"
 	"strings"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/yuriykis/bth-speaker-on/util"
-)
-
-type DeviceType string
-
-const (
-	UnknownDeviceType DeviceType = ""
-	SpeakerType       DeviceType = "Speaker"
-	KeybordType       DeviceType = "Keyboard"
 )
 
 type Devicer interface {
@@ -20,7 +13,7 @@ type Devicer interface {
 	String() string
 }
 
-func MakeDevices(output string) []Devicer {
+func MakeMacDevices(output string) []Devicer {
 	var devices []Devicer
 	d := strings.FieldsFunc(output, func(r rune) bool {
 		return r == '\n' || r == '\t'
@@ -30,10 +23,18 @@ func MakeDevices(output string) []Devicer {
 		dType := strings.Split(v, ":")[1]
 		dName = util.ClearString(dName)
 		dType = util.ClearString(dType)
-		fmt.Printf("Devicer: %s, Type: %s\n", dName, dType)
+		log.Printf("System: Mac OS, Device: %s, Type: %s\n", dName, dType)
 
 		s := NewSpeaker(dName)
 		devices = append(devices, s)
 	}
 	return devices
+}
+
+func MakeLinuxDevices(output string) []Devicer {
+	return nil
+}
+
+func MakeWindowsDevices(output string) []Devicer {
+	return nil
 }
