@@ -1,8 +1,8 @@
-package main
+package util
 
 import "strings"
 
-func clearString(s string) string {
+func ClearString(s string) string {
 	s = strings.Replace(s, "-", " ", -1)
 	s = strings.TrimSpace(s)
 	s = strings.TrimLeft(s, "\n")

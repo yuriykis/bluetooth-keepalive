@@ -4,39 +4,24 @@ import (
 	"log"
 	"runtime"
 	"time"
+
+	"github.com/yuriykis/bth-speaker-on/device"
+	"github.com/yuriykis/bth-speaker-on/system"
 )
-
-type SystemType string
-
-const (
-	UnknownSystemType SystemType = ""
-	MacSystemType     SystemType = "darwin"
-	LinuxSystemType   SystemType = "linux"
-	WindowsSystemType SystemType = "windows"
-)
-
-func (s SystemType) osType(stype string) SystemType {
-	return SystemType(stype)
-}
-
-type System interface {
-	Devices() ([]*Device, error)
-}
 
 func main() {
 	var (
-		system System
-		err    error
-		stype  SystemType
+		dm    system.DeviceManager
+		err   error
+		sType system.SystemType
 	)
-
-	switch stype.osType(runtime.GOOS) {
-	case MacSystemType:
-		system, err = NewMacSystem()
-	case LinuxSystemType:
-		system, err = NewLinuxSystem()
-	case WindowsSystemType:
-		system, err = NewWindowsSystem()
+	switch sType.OsType(runtime.GOOS) {
+	case system.MacSystemType:
+		dm, err = system.NewMacDeviceManager()
+	case system.LinuxSystemType:
+		dm, err = system.NewLinuxDeviceManager()
+	case system.WindowsSystemType:
+		dm, err = system.NewWindowsDeviceManager()
 	default:
 		log.Fatal("Unknown system type")
 	}
@@ -44,14 +29,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	devices, err := system.Devices()
+	devices, err := dm.Devices()
 	if err != nil {
 		log.Fatal(err)
 	}
 	upDevicesLoop(devices)
 }
 
-func upDevicesLoop(devices []*Device) {
+func upDevicesLoop(devices []device.Devicer) {
 	for {
 		for _, d := range devices {
 			d.Up()

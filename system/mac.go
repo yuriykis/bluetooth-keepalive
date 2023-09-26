@@ -1,8 +1,10 @@
-package main
+package system
 
 import (
 	"bytes"
 	"os/exec"
+
+	"github.com/yuriykis/bth-speaker-on/device"
 )
 
 const (
@@ -18,31 +20,31 @@ const (
 	execArgsMac = "SPBluetoothDataType"
 )
 
-type MacSystem struct {
-	devices []*Device
+type MacDeviceManager struct {
+	devices []device.Devicer
 }
 
-func (s *MacSystem) Devices() ([]*Device, error) {
+func (s *MacDeviceManager) Devices() ([]device.Devicer, error) {
 	return s.devices, nil
 }
 
-func NewMacSystem() (*MacSystem, error) {
+func NewMacDeviceManager() (*MacDeviceManager, error) {
 	devices, err := discoverMacDevices()
 	if err != nil {
 		return nil, err
 	}
-	return &MacSystem{
+	return &MacDeviceManager{
 		devices: devices,
 	}, nil
 }
 
-func discoverMacDevices() ([]*Device, error) {
+func discoverMacDevices() ([]device.Devicer, error) {
 	cmd := exec.Command(execCmdMac, execArgsMac)
 	output, err := cmd.Output()
 	if err != nil {
 		return nil, err
 	}
-	var devices []*Device
+	var devices []device.Devicer
 	if len(awkScriptMac) > 0 {
 		cmd2 := exec.Command("awk", awkScriptMac)
 		cmd2.Stdin = bytes.NewBuffer(output)
@@ -50,7 +52,7 @@ func discoverMacDevices() ([]*Device, error) {
 		if err != nil {
 			return nil, err
 		}
-		devices = makeDevices(string(out))
+		devices = device.MakeDevices(string(out))
 	}
 	return devices, nil
 }

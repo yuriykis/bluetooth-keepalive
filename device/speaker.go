@@ -1,8 +1,7 @@
-package main
+package device
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"log"
 	"os/exec"
@@ -11,19 +10,17 @@ import (
 	"github.com/andybrewer/mack"
 )
 
-const (
-	Speaker = "Speaker"
-)
-
-type Device struct {
+type Speaker struct {
 	Name string
-	Type string
 }
 
-func (d *Device) MusicPlaying() (bool, error) {
-	if d.Type != Speaker {
-		return false, errors.New("device is not a speaker")
+func NewSpeaker(name string) *Speaker {
+	return &Speaker{
+		Name: name,
 	}
+}
+
+func (s *Speaker) musicPlaying() (bool, error) {
 	cmd1 := exec.Command("/usr/bin/pmset", "-g")
 	cmd2 := exec.Command("grep", " sleep")
 	output, err := cmd1.Output()
@@ -38,27 +35,24 @@ func (d *Device) MusicPlaying() (bool, error) {
 	return strings.Contains(string(output), "coreaudiod"), nil
 }
 
-func (d *Device) String() string {
-	return fmt.Sprintf("%s - %s", d.Name, d.Type)
+func (s *Speaker) String() string {
+	return fmt.Sprintf("Speaker")
 }
 
-func (d *Device) Up() error {
-	ok, err := d.MusicPlaying()
+func (s *Speaker) Up() error {
+	ok, err := s.musicPlaying()
 	if err != nil {
 		return err
 	}
 	if !ok {
-		if err := d.Volume(0.2); err != nil {
+		if err := s.volume(0.2); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (d *Device) Play() error {
-	if d.Type != Speaker {
-		return nil
-	}
+func (s *Speaker) play() error {
 	if err := mack.Say("Up"); err != nil {
 		return err
 	}
@@ -66,14 +60,13 @@ func (d *Device) Play() error {
 	return nil
 }
 
-func (d *Device) Volume(v float32) error {
+func (s *Speaker) volume(v float32) error {
 	cmd1 := exec.Command("osascript", "-e", "output volume of (get volume settings)")
 	output, err := cmd1.Output()
 	if err != nil {
 		return err
 	}
 	currentVol := string(output)
-	fmt.Println(currentVol)
 
 	cmd2 := exec.Command("osascript", "-e", fmt.Sprintf("set volume output volume %f", v))
 	log.Println("Setting volume to", v)
@@ -82,7 +75,7 @@ func (d *Device) Volume(v float32) error {
 		return err
 	}
 
-	d.Play()
+	s.play()
 
 	cmd3 := exec.Command(
 		"osascript",
@@ -95,22 +88,4 @@ func (d *Device) Volume(v float32) error {
 		return err
 	}
 	return nil
-}
-
-func makeDevices(output string) []*Device {
-	var devices []*Device
-	d := strings.FieldsFunc(output, func(r rune) bool {
-		return r == '\n' || r == '\t'
-	})
-	for _, v := range d {
-		dName := strings.Split(v, ":")[0]
-		dType := strings.Split(v, ":")[1]
-		dName = clearString(dName)
-		dType = clearString(dType)
-		devices = append(devices, &Device{
-			Name: dName,
-			Type: dType,
-		})
-	}
-	return devices
 }
