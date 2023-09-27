@@ -6,7 +6,6 @@ import (
 	"runtime"
 	"sync"
 	"syscall"
-	"time"
 
 	log "github.com/sirupsen/logrus"
 
@@ -45,26 +44,34 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	wg := &sync.WaitGroup{}
-	wg.Add(1)
-	go upDevicesLoop(ctx, devices, wg)
-	wg.Wait()
+	mainWg := &sync.WaitGroup{}
+	mainWg.Add(1)
+	go upDevicesLoop(ctx, devices, mainWg)
+	mainWg.Wait()
 	log.Info("Exiting main...")
 	log.Info("Done exiting main...")
 }
 
-func upDevicesLoop(ctx context.Context, devices []device.Devicer, wg *sync.WaitGroup) {
+func upDevicesLoop(
+	ctx context.Context,
+	devices []device.Devicer,
+	mainWg *sync.WaitGroup,
+) {
 	for {
 		select {
 		case <-ctx.Done():
 			log.Info("Exiting upDevicesLoop...")
-			wg.Done()
+			mainWg.Done()
 			return
 		default:
+			wg := &sync.WaitGroup{}
 			for _, d := range devices {
-				d.Up()
+				log.Infof("Device: %s", d.String())
+				wg.Add(1)
+				go d.Up(wg)
 			}
-			time.Sleep(1 * time.Second)
+			log.Info("Waiting for devices to be up...")
+			wg.Wait()
 		}
 	}
 }

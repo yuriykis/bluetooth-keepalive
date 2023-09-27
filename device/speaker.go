@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os/exec"
 	"strings"
+	"sync"
 
 	log "github.com/sirupsen/logrus"
 
@@ -25,7 +26,8 @@ func (s *Speaker) String() string {
 	return fmt.Sprintf("Speaker")
 }
 
-func (s *Speaker) Up() error {
+func (s *Speaker) Up(wg *sync.WaitGroup) error {
+	defer wg.Done()
 	ok, err := s.musicPlaying()
 	if err != nil {
 		return err

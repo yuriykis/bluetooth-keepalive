@@ -2,6 +2,7 @@ package device
 
 import (
 	"strings"
+	"sync"
 
 	log "github.com/sirupsen/logrus"
 
@@ -9,7 +10,7 @@ import (
 )
 
 type Devicer interface {
-	Up() error
+	Up(wg *sync.WaitGroup) error
 	String() string
 }
 
