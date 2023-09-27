@@ -4,6 +4,7 @@ import (
 	"context"
 	"os/signal"
 	"runtime"
+	"sync"
 	"syscall"
 	"time"
 
@@ -44,21 +45,20 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	quit := make(chan struct{})
-	go upDevicesLoop(devices, quit)
-	<-ctx.Done()
+	wg := &sync.WaitGroup{}
+	wg.Add(1)
+	go upDevicesLoop(ctx, devices, wg)
+	wg.Wait()
 	log.Info("Exiting main...")
-	quit <- struct{}{}
-	<-quit
 	log.Info("Done exiting main...")
 }
 
-func upDevicesLoop(devices []device.Devicer, quit chan struct{}) {
+func upDevicesLoop(ctx context.Context, devices []device.Devicer, wg *sync.WaitGroup) {
 	for {
 		select {
-		case <-quit:
+		case <-ctx.Done():
 			log.Info("Exiting upDevicesLoop...")
-			quit <- struct{}{}
+			wg.Done()
 			return
 		default:
 			for _, d := range devices {
