@@ -1,12 +1,19 @@
 package device
 
 import (
-	"strings"
+	"context"
 	"sync"
 
 	log "github.com/sirupsen/logrus"
+)
 
-	"github.com/yuriykis/bth-speaker-on/util"
+type DeviceType string
+
+const (
+	UnknownDeviceType DeviceType = ""
+	SpeakerDeviceType DeviceType = "Speaker"
+	KeybordDeviceType DeviceType = "Keybord"
+	MouseDeviceType   DeviceType = "Mouse"
 )
 
 type Devicer interface {
@@ -14,28 +21,26 @@ type Devicer interface {
 	String() string
 }
 
-func MakeMacDevices(output string) []Devicer {
-	var devices []Devicer
-	d := strings.FieldsFunc(output, func(r rune) bool {
-		return r == '\n' || r == '\t'
-	})
-	for _, v := range d {
-		dName := strings.Split(v, ":")[0]
-		dType := strings.Split(v, ":")[1]
-		dName = util.ClearString(dName)
-		dType = util.ClearString(dType)
-		log.Printf("System: Mac OS, Device: %s, Type: %s\n", dName, dType)
-
-		s := NewSpeaker(dName)
-		devices = append(devices, s)
+func UpDevicesLoop(
+	ctx context.Context,
+	devices []Devicer,
+	mainWg *sync.WaitGroup,
+) {
+	for {
+		select {
+		case <-ctx.Done():
+			log.Info("Exiting upDevicesLoop...")
+			mainWg.Done()
+			return
+		default:
+			wg := &sync.WaitGroup{}
+			for _, d := range devices {
+				log.Infof("Device: %s", d.String())
+				wg.Add(1)
+				go d.Up(wg)
+			}
+			log.Info("Waiting for devices to be up...")
+			wg.Wait()
+		}
 	}
-	return devices
-}
-
-func MakeLinuxDevices(output string) []Devicer {
-	return nil
-}
-
-func MakeWindowsDevices(output string) []Devicer {
-	return nil
 }

@@ -1,6 +1,10 @@
 package system
 
-import "github.com/yuriykis/bth-speaker-on/device"
+import (
+	"context"
+
+	"github.com/yuriykis/bth-speaker-on/device"
+)
 
 const (
 	awkScriptLinux = `{print $3}`
@@ -26,7 +30,16 @@ func NewLinuxDeviceManager() (*LinuxDeviceManager, error) {
 	}, nil
 }
 
+func (s *LinuxDeviceManager) Start(ctx context.Context) error {
+	return nil
+}
+
 func discoverLinuxDevices() ([]device.Devicer, error) {
 	// TODO: implement
 	return nil, nil
+}
+
+func MakeLinuxDevices(output string) []device.Devicer {
+	// TODO: implement
+	return nil
 }

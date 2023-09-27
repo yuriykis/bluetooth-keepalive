@@ -2,9 +2,16 @@ package system
 
 import (
 	"bytes"
+	"context"
+
+	log "github.com/sirupsen/logrus"
+
 	"os/exec"
+	"strings"
+	"sync"
 
 	"github.com/yuriykis/bth-speaker-on/device"
+	"github.com/yuriykis/bth-speaker-on/util"
 )
 
 const (
@@ -38,6 +45,22 @@ func NewMacDeviceManager() (*MacDeviceManager, error) {
 	}, nil
 }
 
+func (dm *MacDeviceManager) Start(ctx context.Context) error {
+	devices, err := dm.Devices()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	mainWg := &sync.WaitGroup{}
+	mainWg.Add(1)
+	go device.UpDevicesLoop(ctx, devices, mainWg)
+	mainWg.Wait()
+
+	log.Info("Exiting main...")
+	log.Info("Done exiting main...")
+	return nil
+}
+
 func discoverMacDevices() ([]device.Devicer, error) {
 	cmd := exec.Command(execCmdMac, execArgsMac)
 	output, err := cmd.Output()
@@ -52,7 +75,47 @@ func discoverMacDevices() ([]device.Devicer, error) {
 		if err != nil {
 			return nil, err
 		}
-		devices = device.MakeMacDevices(string(out))
+		devices = MakeMacDevices(string(out))
 	}
 	return devices, nil
+}
+
+func MakeMacDevices(output string) []device.Devicer {
+	var devices []device.Devicer
+	d := parseMacDevicesOutput(output)
+	for _, v := range d {
+		var (
+			s     device.Devicer
+			dName = util.ClearString(strings.Split(v, ":")[0])
+			dType = util.ClearString(strings.Split(v, ":")[1])
+		)
+
+		log.Printf("System: Mac OS, Device: %s, Type: %s\n", dName, dType)
+
+		switch device.DeviceType(dType) {
+		case device.SpeakerDeviceType:
+			s = device.NewSpeaker(dName)
+		case device.KeybordDeviceType:
+			// TODO: implement
+			continue
+		case device.MouseDeviceType:
+			// TODO: implement
+			continue
+		default:
+			log.Printf(
+				"System: Mac OS, Device: %s, Type: %s, not supported\n",
+				dName,
+				dType,
+			)
+			continue
+		}
+		devices = append(devices, s)
+	}
+	return devices
+}
+
+func parseMacDevicesOutput(output string) []string {
+	return strings.FieldsFunc(output, func(r rune) bool {
+		return r == '\n' || r == '\t'
+	})
 }

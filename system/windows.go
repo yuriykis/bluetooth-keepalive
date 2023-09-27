@@ -1,6 +1,10 @@
 package system
 
-import "github.com/yuriykis/bth-speaker-on/device"
+import (
+	"context"
+
+	"github.com/yuriykis/bth-speaker-on/device"
+)
 
 const (
 	awkScriptWindows = ``
@@ -26,7 +30,16 @@ func NewWindowsDeviceManager() (*WindowsDeviceManager, error) {
 	}, nil
 }
 
+func (s *WindowsDeviceManager) Start(ctx context.Context) error {
+	return nil
+}
+
 func discoverWindowsDevices() ([]device.Devicer, error) {
 	// TODO: implement
 	return nil, nil
+}
+
+func MakeWindowsDevices(output string) []device.Devicer {
+	// TODO: implement
+	return nil
 }

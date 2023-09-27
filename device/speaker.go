@@ -28,6 +28,7 @@ func (s *Speaker) String() string {
 
 func (s *Speaker) Up(wg *sync.WaitGroup) error {
 	defer wg.Done()
+
 	ok, err := s.musicPlaying()
 	if err != nil {
 		return err
@@ -73,12 +74,13 @@ func (s *Speaker) volume(v float32) error {
 
 	cmd2 := exec.Command("osascript", "-e", fmt.Sprintf("set volume output volume %f", v))
 	log.Println("Setting volume to", v)
-	err = cmd2.Run()
-	if err != nil {
+	if err = cmd2.Run(); err != nil {
 		return err
 	}
 
-	s.play()
+	if err := s.play(); err != nil {
+		return err
+	}
 
 	cmd3 := exec.Command(
 		"osascript",
@@ -86,8 +88,7 @@ func (s *Speaker) volume(v float32) error {
 		fmt.Sprintf("set volume output volume %s", currentVol),
 	)
 	log.Println("Setting volume back to", currentVol)
-	err = cmd3.Run()
-	if err != nil {
+	if err = cmd3.Run(); err != nil {
 		return err
 	}
 	return nil

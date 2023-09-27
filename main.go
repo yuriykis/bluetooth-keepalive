@@ -2,24 +2,27 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"os/signal"
 	"runtime"
-	"sync"
 	"syscall"
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/yuriykis/bth-speaker-on/device"
 	"github.com/yuriykis/bth-speaker-on/system"
 )
 
 func main() {
+	log.SetFormatter(&log.TextFormatter{
+		DisableColors: false,
+		FullTimestamp: true,
+	})
+	fmt.Println(asciBanner)
 	var (
-		dm    system.DeviceManager
-		err   error
-		sType system.SystemType
+		dm  system.DeviceManager
+		err error
 	)
-	switch sType.OsType(runtime.GOOS) {
+	switch system.SystemType(runtime.GOOS) {
 	case system.MacSystemType:
 		dm, err = system.NewMacDeviceManager()
 	case system.LinuxSystemType:
@@ -40,38 +43,13 @@ func main() {
 	)
 	defer stop()
 
-	devices, err := dm.Devices()
-	if err != nil {
-		log.Fatal(err)
-	}
-	mainWg := &sync.WaitGroup{}
-	mainWg.Add(1)
-	go upDevicesLoop(ctx, devices, mainWg)
-	mainWg.Wait()
-	log.Info("Exiting main...")
-	log.Info("Done exiting main...")
+	dm.Start(ctx)
 }
 
-func upDevicesLoop(
-	ctx context.Context,
-	devices []device.Devicer,
-	mainWg *sync.WaitGroup,
-) {
-	for {
-		select {
-		case <-ctx.Done():
-			log.Info("Exiting upDevicesLoop...")
-			mainWg.Done()
-			return
-		default:
-			wg := &sync.WaitGroup{}
-			for _, d := range devices {
-				log.Infof("Device: %s", d.String())
-				wg.Add(1)
-				go d.Up(wg)
-			}
-			log.Info("Waiting for devices to be up...")
-			wg.Wait()
-		}
-	}
-}
+var asciBanner = `
+  ___  _____  _  _   ___                   _                ___   _  _ 
+ | _ )|_   _|| || | / __| _ __  ___  __ _ | |__ ___  _ _   / _ \ | \| |
+ | _ \  | |  | __ | \__ \| '_ \/ -_)/ _' || / // -_)| '_| | (_) || .' |
+ |___/  |_|  |_||_| |___/| .__/\___|\__,_||_\_\\___||_|    \___/ |_|\_|
+                         |_|                                           
+`
