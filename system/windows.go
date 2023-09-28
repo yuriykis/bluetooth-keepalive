@@ -3,6 +3,8 @@ package system
 import (
 	"context"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/yuriykis/bth-speaker-on/device"
 )
 
@@ -31,6 +33,7 @@ func NewWindowsDeviceManager() (*WindowsDeviceManager, error) {
 }
 
 func (s *WindowsDeviceManager) Start(ctx context.Context) error {
+	log.Println("WindowsDeviceManager.Start() is not implemented")
 	return nil
 }
 
