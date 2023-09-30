@@ -2,6 +2,7 @@ package system
 
 import (
 	"context"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 
@@ -32,7 +33,7 @@ func NewWindowsDeviceManager() (*WindowsDeviceManager, error) {
 	}, nil
 }
 
-func (s *WindowsDeviceManager) Start(ctx context.Context) error {
+func (s *WindowsDeviceManager) Start(ctx context.Context, d time.Duration) error {
 	log.Println("WindowsDeviceManager.Start() is not implemented")
 	return nil
 }

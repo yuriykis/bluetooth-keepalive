@@ -3,6 +3,7 @@ package system
 import (
 	"bytes"
 	"context"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 
@@ -45,15 +46,14 @@ func NewMacDeviceManager() (*MacDeviceManager, error) {
 	}, nil
 }
 
-func (dm *MacDeviceManager) Start(ctx context.Context) error {
+func (dm *MacDeviceManager) Start(ctx context.Context, d time.Duration) error {
 	devices, err := dm.Devices()
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	mainWg := &sync.WaitGroup{}
 	mainWg.Add(1)
-	go device.UpDevicesLoop(ctx, devices, mainWg)
+	go device.UpDevicesLoop(ctx, devices, mainWg, d)
 	mainWg.Wait()
 
 	log.Info("Exiting main...")
@@ -109,6 +109,7 @@ func MakeMacDevices(output string) []device.Devicer {
 			)
 			continue
 		}
+		s = device.NewLoggingMiddleware(s)
 		devices = append(devices, s)
 	}
 	return devices

@@ -2,6 +2,7 @@ package system
 
 import (
 	"context"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 
@@ -32,7 +33,7 @@ func NewLinuxDeviceManager() (*LinuxDeviceManager, error) {
 	}, nil
 }
 
-func (s *LinuxDeviceManager) Start(ctx context.Context) error {
+func (s *LinuxDeviceManager) Start(ctx context.Context, d time.Duration) error {
 	log.Println("LinuxDeviceManager.Start() is not implemented")
 	return nil
 }

@@ -3,6 +3,7 @@ package device
 import (
 	"context"
 	"sync"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -25,6 +26,7 @@ func UpDevicesLoop(
 	ctx context.Context,
 	devices []Devicer,
 	mainWg *sync.WaitGroup,
+	d time.Duration,
 ) {
 	for {
 		select {
@@ -39,8 +41,8 @@ func UpDevicesLoop(
 				wg.Add(1)
 				go d.Up(wg)
 			}
-			log.Info("Waiting for devices to be up...")
 			wg.Wait()
+			time.Sleep(d)
 		}
 	}
 }

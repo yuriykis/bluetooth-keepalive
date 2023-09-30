@@ -2,6 +2,7 @@ package system
 
 import (
 	"context"
+	"time"
 
 	"github.com/yuriykis/bth-speaker-on/device"
 )
@@ -17,5 +18,5 @@ const (
 
 type DeviceManager interface {
 	Devices() ([]device.Devicer, error)
-	Start(context.Context) error
+	Start(context.Context, time.Duration) error
 }

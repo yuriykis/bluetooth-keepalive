@@ -2,10 +2,12 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"os/signal"
 	"runtime"
 	"syscall"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 
@@ -18,6 +20,14 @@ func main() {
 		FullTimestamp: true,
 	})
 	fmt.Println(asciBanner)
+
+	upIntervalFlag := flag.Int(
+		"up-interval",
+		5,
+		"Interval in seconds to check if device is up",
+	)
+	upInterval := time.Duration(*upIntervalFlag) * time.Second
+	flag.Parse()
 	var (
 		dm  system.DeviceManager
 		err error
@@ -43,7 +53,7 @@ func main() {
 	)
 	defer stop()
 
-	dm.Start(ctx)
+	dm.Start(ctx, upInterval)
 }
 
 var asciBanner = `
