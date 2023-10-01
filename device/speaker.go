@@ -31,10 +31,12 @@ func (s *Speaker) Up(wg *sync.WaitGroup) error {
 
 	ok, err := s.musicPlaying()
 	if err != nil {
+		log.Error(err)
 		return err
 	}
 	if !ok {
 		if err := s.volume(0.2); err != nil {
+			log.Error(err)
 			return err
 		}
 	}

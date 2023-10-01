@@ -42,6 +42,7 @@ func UpDevicesLoop(
 				go d.Up(wg)
 			}
 			wg.Wait()
+			log.Info("Done upDevicesLoop...")
 			time.Sleep(d)
 		}
 	}
