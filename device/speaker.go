@@ -4,10 +4,12 @@ import (
 	"bytes"
 	"fmt"
 	"os/exec"
+	"strconv"
 	"strings"
 	"sync"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/yuriykis/bth-speaker-on/mac"
 
 	"github.com/andybrewer/mack"
 )
@@ -67,30 +69,25 @@ func (s *Speaker) play() error {
 }
 
 func (s *Speaker) volume(v float32) error {
-	cmd1 := exec.Command("osascript", "-e", "output volume of (get volume settings)")
-	output, err := cmd1.Output()
+	currentVol, err := mac.Run(mac.GetCurrentVolume())
 	if err != nil {
 		return err
 	}
-	currentVol := string(output)
 
-	cmd2 := exec.Command("osascript", "-e", fmt.Sprintf("set volume output volume %f", v))
-	log.Println("Setting volume to", v)
-	if err = cmd2.Run(); err != nil {
+	_, err = mac.Run(mac.SetVolume(v))
+	if err != nil {
 		return err
 	}
-
 	if err := s.play(); err != nil {
 		return err
 	}
 
-	cmd3 := exec.Command(
-		"osascript",
-		"-e",
-		fmt.Sprintf("set volume output volume %s", currentVol),
-	)
-	log.Println("Setting volume back to", currentVol)
-	if err = cmd3.Run(); err != nil {
+	currentVolFloat, err := strconv.ParseFloat(currentVol, 32)
+	if err != nil {
+		return err
+	}
+	_, err = mac.Run(mac.SetVolume(float32(currentVolFloat)))
+	if err != nil {
 		return err
 	}
 	return nil

@@ -1,7 +1,7 @@
 BINARY_NAME=bth-speaker-on
-UP_INTERVAL=5
+UP_INTERVAL=60
 
-build: export GOOS=linux
+build: export GOOS=darwin
 build: export GOARCH=arm64
 build:
 	@go build -o bin/$(BINARY_NAME) -v
