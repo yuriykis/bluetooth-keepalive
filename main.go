@@ -42,6 +42,8 @@ func main() {
 	default:
 		log.Fatal("Unknown system type")
 	}
+
+	dm = system.NewLoggingDeviceManagerMiddleware(dm)
 	if err != nil {
 		log.Fatal(err)
 	}
