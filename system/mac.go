@@ -56,8 +56,6 @@ func (dm *MacDeviceManager) Start(ctx context.Context, d time.Duration) error {
 	go device.UpDevicesLoop(ctx, devices, mainWg, d)
 	mainWg.Wait()
 
-	log.Info("Exiting main...")
-	log.Info("Done exiting main...")
 	return nil
 }
 
@@ -74,6 +72,10 @@ func discoverMacDevices() ([]device.Devicer, error) {
 		}
 		devices = MakeMacDevices(string(out))
 	}
+	logger.WithFields(log.Fields{
+		"devices": devices,
+	}).Info("Discovered devices")
+
 	return devices, nil
 }
 
@@ -87,7 +89,11 @@ func MakeMacDevices(output string) []device.Devicer {
 			dType = util.ClearString(strings.Split(v, ":")[1])
 		)
 
-		log.Printf("System: Mac OS, Device: %s, Type: %s\n", dName, dType)
+		logger.WithFields(log.Fields{
+			"system": "Mac OS",
+			"device": dName,
+			"type":   dType,
+		}).Info("Discovered device")
 
 		switch device.DeviceType(dType) {
 		case device.SpeakerDeviceType:
@@ -99,11 +105,11 @@ func MakeMacDevices(output string) []device.Devicer {
 			// TODO: implement
 			continue
 		default:
-			log.Printf(
-				"System: Mac OS, Device: %s, Type: %s, not supported\n",
-				dName,
-				dType,
-			)
+			logger.WithFields(log.Fields{
+				"system": "Mac OS",
+				"device": dName,
+				"type":   dType,
+			}).Info("Device not supported")
 			continue
 		}
 		s = device.NewLoggingMiddleware(s)
