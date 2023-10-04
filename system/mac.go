@@ -62,16 +62,13 @@ func (dm *MacDeviceManager) Start(ctx context.Context, d time.Duration) error {
 }
 
 func discoverMacDevices() ([]device.Devicer, error) {
-	cmd := exec.Command(execCmdMac, execArgsMac)
-	output, err := cmd.Output()
+	output, err := runCmd(execCmdMac, nil, execArgsMac)
 	if err != nil {
 		return nil, err
 	}
 	var devices []device.Devicer
 	if len(awkScriptMac) > 0 {
-		cmd2 := exec.Command("awk", awkScriptMac)
-		cmd2.Stdin = bytes.NewBuffer(output)
-		out, err := cmd2.Output()
+		out, err := runCmd("awk", output, awkScriptMac)
 		if err != nil {
 			return nil, err
 		}
@@ -119,4 +116,16 @@ func parseMacDevicesOutput(output string) []string {
 	return strings.FieldsFunc(output, func(r rune) bool {
 		return r == '\n' || r == '\t'
 	})
+}
+
+func runCmd(cmd string, input []byte, args ...string) ([]byte, error) {
+	command := exec.Command(cmd, args...)
+	if len(input) > 0 {
+		command.Stdin = bytes.NewBuffer(input)
+	}
+	output, err := command.CombinedOutput()
+	if err != nil {
+		return nil, err
+	}
+	return output, nil
 }
