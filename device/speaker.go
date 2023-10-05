@@ -8,7 +8,8 @@ import (
 	"strings"
 	"sync"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/yuriykis/bth-speaker-on/log"
+
 	"github.com/yuriykis/bth-speaker-on/mac"
 
 	"github.com/andybrewer/mack"
@@ -64,7 +65,7 @@ func (s *Speaker) play() error {
 	if err := mack.Say("Up"); err != nil {
 		return err
 	}
-	log.Println("Playing music")
+	log.Infof("Playing music")
 	return nil
 }
 

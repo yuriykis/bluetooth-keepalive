@@ -5,13 +5,12 @@ import (
 	"context"
 	"time"
 
-	log "github.com/sirupsen/logrus"
-
 	"os/exec"
 	"strings"
 	"sync"
 
 	"github.com/yuriykis/bth-speaker-on/device"
+	"github.com/yuriykis/bth-speaker-on/log"
 	"github.com/yuriykis/bth-speaker-on/util"
 )
 
@@ -37,20 +36,15 @@ func (s *MacDeviceManager) Devices() ([]device.Devicer, error) {
 }
 
 func NewMacDeviceManager() (*MacDeviceManager, error) {
-	devices, err := discoverMacDevices()
-	if err != nil {
-		return nil, err
-	}
-	return &MacDeviceManager{
-		devices: devices,
-	}, nil
+	return &MacDeviceManager{}, nil
 }
 
 func (dm *MacDeviceManager) Start(ctx context.Context, d time.Duration) error {
-	devices, err := dm.Devices()
+	devices, err := discoverMacDevices()
 	if err != nil {
 		log.Fatal(err)
 	}
+	dm.devices = devices
 	mainWg := &sync.WaitGroup{}
 	mainWg.Add(1)
 	go device.UpDevicesLoop(ctx, devices, mainWg, d)
@@ -72,7 +66,7 @@ func discoverMacDevices() ([]device.Devicer, error) {
 		}
 		devices = MakeMacDevices(string(out))
 	}
-	logger.WithFields(log.Fields{
+	log.WithFields(log.Fields{
 		"devices": devices,
 	}).Info("Discovered devices")
 
@@ -89,7 +83,7 @@ func MakeMacDevices(output string) []device.Devicer {
 			dType = util.ClearString(strings.Split(v, ":")[1])
 		)
 
-		logger.WithFields(log.Fields{
+		log.WithFields(log.Fields{
 			"system": "Mac OS",
 			"device": dName,
 			"type":   dType,
@@ -105,7 +99,7 @@ func MakeMacDevices(output string) []device.Devicer {
 			// TODO: implement
 			continue
 		default:
-			logger.WithFields(log.Fields{
+			log.WithFields(log.Fields{
 				"system": "Mac OS",
 				"device": dName,
 				"type":   dType,

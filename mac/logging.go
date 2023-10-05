@@ -1,7 +1,7 @@
 package mac
 
 import (
-	log "github.com/sirupsen/logrus"
+	"github.com/yuriykis/bth-speaker-on/log"
 )
 
 func Run(command string) (string, error) {

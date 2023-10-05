@@ -3,24 +3,18 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
-	"os"
 	"os/signal"
 	"runtime"
 	"syscall"
 	"time"
 
-	"github.com/sirupsen/logrus"
+	"github.com/yuriykis/bth-speaker-on/log"
 
 	"github.com/yuriykis/bth-speaker-on/system"
 )
 
-const (
-	logFile = "bth-speaker-on.log"
-)
-
 func main() {
-	fmt.Println(asciBanner)
+	log.Println(asciBanner)
 
 	upIntervalFlag := flag.Int(
 		"up-interval",
@@ -32,9 +26,7 @@ func main() {
 	var (
 		dm  system.DeviceManager
 		err error
-		log = setupLogger()
 	)
-	// fix logging, should be initialized before DeviceManager is created
 	switch system.SystemType(runtime.GOOS) {
 	case system.MacSystemType:
 		dm, err = system.NewMacDeviceManager()
@@ -46,7 +38,7 @@ func main() {
 		log.Fatal("Unknown system type")
 	}
 
-	dm = system.NewLoggingDeviceManagerMiddleware(dm, log)
+	dm = system.NewLoggingDeviceManagerMiddleware(dm)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -59,20 +51,6 @@ func main() {
 	defer stop()
 
 	dm.Start(ctx, upInterval)
-}
-
-func setupLogger() *logrus.Logger {
-	l := logrus.New()
-	l.SetFormatter(&logrus.JSONFormatter{})
-	l.SetLevel(logrus.DebugLevel)
-	l.Out = os.Stdout
-	logFile, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-	if err == nil {
-		l.Out = logFile
-	} else {
-		l.Info("Failed to log to file, using default stderr")
-	}
-	return l
 }
 
 var asciBanner = `

@@ -3,7 +3,7 @@ package device
 import (
 	"sync"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/yuriykis/bth-speaker-on/log"
 )
 
 type LoggingMiddleware struct {
