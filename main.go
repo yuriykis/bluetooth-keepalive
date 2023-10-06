@@ -8,22 +8,54 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/spf13/cobra"
 	"github.com/yuriykis/bth-speaker-on/log"
 
 	"github.com/yuriykis/bth-speaker-on/system"
 )
 
-func main() {
-	log.ClearLogFile()
-	log.Println(asciBanner)
+var startCmd = &cobra.Command{
+	Use:     "start",
+	Aliases: []string{"start"},
+	Short:   "Start bth-speaker-on",
+	Args:    cobra.ExactArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		log.ClearLogFile()
+		log.Println(asciBanner)
 
-	upIntervalFlag := flag.Int(
-		"up-interval",
-		5,
-		"Interval in seconds to check if device is up",
-	)
-	upInterval := time.Duration(*upIntervalFlag) * time.Second
-	flag.Parse()
+		upIntervalFlag := flag.Int(
+			"up-interval",
+			5,
+			"Interval in minutes to check if device is up",
+		)
+		upInterval := time.Duration(*upIntervalFlag) * time.Second // TODO: minutes
+		flag.Parse()
+
+		Run(upInterval)
+	},
+}
+
+var rootCmd = &cobra.Command{
+	Use:     "bth-speaker-on",
+	Aliases: []string{"bth-speaker-on"},
+	Short:   "bth-speaker-on is a tool to keep bluetooth speaker on",
+	Long:    "bth-speaker-on is a tool to keep bluetooth speaker on",
+	Run: func(cmd *cobra.Command, args []string) {
+		cmd.Help()
+	},
+}
+
+func main() {
+	if err := rootCmd.Execute(); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func init() {
+	rootCmd.AddCommand(startCmd)
+}
+
+func Run(upInterval time.Duration) {
 	var (
 		dm  system.DeviceManager
 		err error

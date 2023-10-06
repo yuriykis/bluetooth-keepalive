@@ -7,4 +7,4 @@ build:
 	@go build -o bin/$(BINARY_NAME) -v
 
 run: build
-	@./bin/$(BINARY_NAME) -up-interval=$(UP_INTERVAL)
+	@./bin/$(BINARY_NAME) start up-interval=$(UP_INTERVAL)
