@@ -3,8 +3,10 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"os/signal"
 	"runtime"
+	"strconv"
 	"syscall"
 	"time"
 
@@ -14,6 +16,14 @@ import (
 	"github.com/yuriykis/bth-speaker-on/system"
 )
 
+func printStartupInfo() {
+	fmt.Println(asciBanner)
+	fmt.Printf("OS: %s\n", runtime.GOOS)
+	fmt.Printf("Arch: %s\n", runtime.GOARCH)
+	fmt.Printf("Version: %s\n", runtime.Version())
+	fmt.Println("Log file: /tmp/bth-speaker-on.log")
+}
+
 var startCmd = &cobra.Command{
 	Use:     "start",
 	Aliases: []string{"start"},
@@ -22,13 +32,17 @@ var startCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		log.ClearLogFile()
 		log.Println(asciBanner)
+		printStartupInfo()
 
-		upIntervalFlag := flag.Int(
-			"up-interval",
-			5,
-			"Interval in minutes to check if device is up",
-		)
-		upInterval := time.Duration(*upIntervalFlag) * time.Second // TODO: minutes
+		upIntervalFlag := cmd.Flags().Lookup("up-interval")
+		if upIntervalFlag == nil {
+			log.Fatal("up-interval flag is not set")
+		}
+		upIntervalValue, err := strconv.Atoi(upIntervalFlag.Value.String())
+		if err != nil {
+			log.Fatal(err)
+		}
+		upInterval := time.Duration(upIntervalValue) * time.Second // TODO: minutes
 		flag.Parse()
 
 		Run(upInterval)
@@ -52,6 +66,12 @@ func main() {
 }
 
 func init() {
+	startCmd.Flags().IntP(
+		"up-interval",
+		"u",
+		5,
+		"Interval in minutes to check if device is up",
+	)
 	rootCmd.AddCommand(startCmd)
 }
 
