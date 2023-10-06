@@ -1,5 +1,5 @@
 BINARY_NAME=bth-speaker-on
-UP_INTERVAL=60
+UP_INTERVAL=5
 
 build: export GOOS=darwin
 build: export GOARCH=arm64
@@ -8,3 +8,6 @@ build:
 
 run: build
 	@./bin/$(BINARY_NAME) start up-interval=$(UP_INTERVAL)
+
+install: build
+	@go install
