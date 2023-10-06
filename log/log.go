@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	logFile = "bth-speaker-on.log"
+	logFile = "/tmp/bth-speaker-on.log"
 )
 
 var logger *logrus.Logger
