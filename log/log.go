@@ -41,6 +41,16 @@ func setupLogger(l *logrus.Logger) {
 	}
 }
 
+func ClearLogFile() error {
+	logFile, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0666)
+	if err != nil {
+		return err
+	}
+	logFile.Truncate(0)
+	logFile.Close()
+	return nil
+}
+
 func Info(args ...any) {
 	logger.Info(args...)
 }

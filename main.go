@@ -14,6 +14,7 @@ import (
 )
 
 func main() {
+	log.ClearLogFile()
 	log.Println(asciBanner)
 
 	upIntervalFlag := flag.Int(
