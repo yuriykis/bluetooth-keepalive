@@ -6,12 +6,12 @@ import (
 	"os"
 	"os/signal"
 	"runtime"
-	"strconv"
 	"syscall"
 	"time"
 
 	"github.com/sevlyar/go-daemon"
 	"github.com/spf13/cobra"
+	"github.com/yuriykis/bth-speaker-on/input"
 	"github.com/yuriykis/bth-speaker-on/log"
 	"github.com/yuriykis/bth-speaker-on/system"
 )
@@ -34,14 +34,13 @@ var startCmd = &cobra.Command{
 		if upIntervalFlag == nil {
 			log.Fatal("up-interval flag is not set")
 		}
-		upIntervalValue, err := strconv.Atoi(upIntervalFlag.Value.String())
+		flag.Parse()
+		upInterval, err := input.ParseUpIntervalFlag(upIntervalFlag)
 		if err != nil {
 			log.Fatal(err)
 		}
-		upInterval := time.Duration(upIntervalValue) * time.Second // TODO: minutes
-		flag.Parse()
 
-		if err := runDaemon(upInterval); err != nil {
+		if err := runDaemon(upInterval.Duration()); err != nil {
 			log.Fatal(err)
 		}
 	},
