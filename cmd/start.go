@@ -26,18 +26,24 @@ var startCmd = &cobra.Command{
 	Use:     "start",
 	Aliases: []string{"start"},
 	Short:   "Start bth-speaker-on",
-	Args:    cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		log.ClearLogFile()
 
-		upIntervalFlag := cmd.Flags().Lookup("up-interval")
-		if upIntervalFlag == nil {
-			log.Fatal("up-interval flag is not set")
-		}
+		var (
+			upIntervalFlag = cmd.Flags().Lookup("up-interval")
+			upInterval     *input.UpInterval
+			err            error
+		)
+
 		flag.Parse()
-		upInterval, err := input.ParseUpIntervalFlag(upIntervalFlag)
-		if err != nil {
-			log.Fatal(err)
+		if upIntervalFlag != nil {
+			upInterval, err = input.ParseUpIntervalFlag(upIntervalFlag)
+			if err != nil {
+				log.Fatal(err)
+			}
+		} else {
+			upInterval = input.DefaultUpInterval()
+			log.Info("No up-interval flag provided, using default value", upInterval.Value)
 		}
 
 		if err := runDaemon(upInterval.Duration()); err != nil {

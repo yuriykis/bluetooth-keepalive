@@ -7,9 +7,20 @@ import (
 	"github.com/spf13/pflag"
 )
 
+const (
+	DefaultUpIntervalValue = 5
+)
+
 type UpInterval struct {
 	Value int
 	Unit  time.Duration
+}
+
+func DefaultUpInterval() *UpInterval {
+	return &UpInterval{
+		Value: DefaultUpIntervalValue,
+		Unit:  time.Second,
+	}
 }
 
 func (i *UpInterval) Duration() time.Duration {

@@ -9,5 +9,8 @@ build:
 run: build
 	@./bin/$(BINARY_NAME) start up-interval=$(UP_INTERVAL)
 
+run-default: build
+	@./bin/$(BINARY_NAME) start
+	
 install: build
 	@go install
