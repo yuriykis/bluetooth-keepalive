@@ -2,14 +2,14 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/yuriykis/bth-speaker-on/log"
+	"github.com/yuriykis/bluetooth-keepalive/log"
 )
 
 var rootCmd = &cobra.Command{
-	Use:     "bth-speaker-on",
-	Aliases: []string{"bth-speaker-on"},
-	Short:   "bth-speaker-on is a tool to keep bluetooth speaker on",
-	Long:    "bth-speaker-on is a tool to keep bluetooth speaker on",
+	Use:     "bluetooth-keepalive",
+	Aliases: []string{"bluetooth-keepalive"},
+	Short:   "bluetooth-keepalive is a tool to keep bluetooth speaker on",
+	Long:    "bluetooth-keepalive is a tool to keep bluetooth speaker on",
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},

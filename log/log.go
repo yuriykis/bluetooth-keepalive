@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	logFile = "/tmp/bth-speaker-on.log"
+	logFile = "/tmp/bluetooth-keepalive.log"
 )
 
 var logger *logrus.Logger

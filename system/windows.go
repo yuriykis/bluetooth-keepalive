@@ -6,7 +6,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/yuriykis/bth-speaker-on/device"
+	"github.com/yuriykis/bluetooth-keepalive/device"
 )
 
 const (

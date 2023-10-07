@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/yuriykis/bth-speaker-on/device"
-	"github.com/yuriykis/bth-speaker-on/log"
+	"github.com/yuriykis/bluetooth-keepalive/device"
+	"github.com/yuriykis/bluetooth-keepalive/log"
 )
 
 type LoggingDeviceManagerMiddleware struct {

@@ -3,7 +3,7 @@ package device
 import (
 	"sync"
 
-	"github.com/yuriykis/bth-speaker-on/log"
+	"github.com/yuriykis/bluetooth-keepalive/log"
 )
 
 type LoggingMiddleware struct {

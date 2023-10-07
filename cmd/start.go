@@ -11,21 +11,21 @@ import (
 
 	"github.com/sevlyar/go-daemon"
 	"github.com/spf13/cobra"
-	"github.com/yuriykis/bth-speaker-on/input"
-	"github.com/yuriykis/bth-speaker-on/log"
-	"github.com/yuriykis/bth-speaker-on/system"
+	"github.com/yuriykis/bluetooth-keepalive/input"
+	"github.com/yuriykis/bluetooth-keepalive/log"
+	"github.com/yuriykis/bluetooth-keepalive/system"
 )
 
 const (
-	DaemonLogFileName = "/tmp/bth-speaker-on-daemon.log"
-	DaemonPidFileName = "/tmp/bth-speaker-on.pid"
-	MainLogFileName   = "/tmp/bth-speaker-on.log"
+	DaemonLogFileName = "/tmp/bluetooth-keepalive-daemon.log"
+	DaemonPidFileName = "/tmp/bluetooth-keepalive.pid"
+	MainLogFileName   = "/tmp/bluetooth-keepalive.log"
 )
 
 var startCmd = &cobra.Command{
 	Use:     "start",
 	Aliases: []string{"start"},
-	Short:   "Start bth-speaker-on",
+	Short:   "Start bluetooth-keepalive",
 	Run: func(cmd *cobra.Command, args []string) {
 		log.ClearLogFile()
 

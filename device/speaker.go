@@ -8,9 +8,9 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/yuriykis/bth-speaker-on/log"
+	"github.com/yuriykis/bluetooth-keepalive/log"
 
-	"github.com/yuriykis/bth-speaker-on/mac"
+	"github.com/yuriykis/bluetooth-keepalive/mac"
 
 	"github.com/andybrewer/mack"
 )

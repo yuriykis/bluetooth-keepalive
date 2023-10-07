@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/yuriykis/bth-speaker-on/device"
+	"github.com/yuriykis/bluetooth-keepalive/device"
 )
 
 type SystemType string

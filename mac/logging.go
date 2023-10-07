@@ -1,7 +1,7 @@
 package mac
 
 import (
-	"github.com/yuriykis/bth-speaker-on/log"
+	"github.com/yuriykis/bluetooth-keepalive/log"
 )
 
 func Run(command string) (string, error) {

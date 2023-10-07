@@ -1,4 +1,4 @@
-module github.com/yuriykis/bth-speaker-on
+module github.com/yuriykis/bluetooth-keepalive
 
 go 1.21.1
 

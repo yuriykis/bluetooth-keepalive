@@ -1,4 +1,4 @@
-BINARY_NAME=bth-speaker-on
+BINARY_NAME=bluetooth-keepalive
 UP_INTERVAL=5
 
 build: export GOOS=darwin

@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/yuriykis/bth-speaker-on/log"
+	"github.com/yuriykis/bluetooth-keepalive/log"
 )
 
 type DeviceType string
