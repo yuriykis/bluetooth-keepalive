@@ -4,3 +4,4 @@ jbl.sh
 bash.sh
 __debug_*
 bth-speaker-on.log
+bth-speaker-on.pid
