@@ -30,7 +30,7 @@ var startCmd = &cobra.Command{
 		log.ClearLogFile()
 
 		var (
-			upIntervalFlag = cmd.Flags().Lookup("up-interval")
+			upIntervalFlag = cmd.Flags().Lookup("--up-interval")
 			upInterval     *input.UpInterval
 			err            error
 		)
