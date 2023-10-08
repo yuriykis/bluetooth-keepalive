@@ -19,7 +19,7 @@ type UpInterval struct {
 func DefaultUpInterval() *UpInterval {
 	return &UpInterval{
 		Value: DefaultUpIntervalValue,
-		Unit:  time.Second,
+		Unit:  time.Minute,
 	}
 }
 
@@ -35,7 +35,7 @@ func ParseUpIntervalFlag(fv *pflag.Flag) (*UpInterval, error) {
 	}
 	upInterval := &UpInterval{
 		Value: fvInt,
-		Unit:  time.Second, // TODO: make it configurable
+		Unit:  time.Minute, // TODO: make it configurable
 	}
 
 	if err != nil {
