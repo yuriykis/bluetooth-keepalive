@@ -46,7 +46,7 @@ bluetooth-keepalive start
 ```
 This will start the tool and periodically check if there is any sound playing on your computer. If there is no sound playing, it will keep your Bluetooth device from turning off. The default interval is 5 minutes, but you can change this by passing the -interval flag:
 ```sh
-bluetooth-keepalive start --up-interval 10
+bluetooth-keepalive start --up-interval=10
 ```
 ## Contributing
 If you would like to contribute to Bluetooth KeepAlive, please feel free to submit a pull request. There are TODOs in the code that make it easy to extend the tool to support other operating systems and devices.
