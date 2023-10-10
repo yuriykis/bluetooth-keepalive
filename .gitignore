@@ -5,3 +5,4 @@ bash.sh
 __debug_*
 bluetooth-keepalive.log
 bluetooth-keepalive.pid
+.DS_Store
